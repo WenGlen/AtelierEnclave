@@ -1,10 +1,6 @@
 import { useState, useMemo } from "react"
 import { useNavigate } from "react-router-dom"
 
-
-import { useScrollToBookingForm } from "@/hooks/useScrollToBookingForm"
-
-
 interface SessionItem {
   sessionId: number
   sessionName: string

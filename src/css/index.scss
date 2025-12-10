@@ -1,0 +1,239 @@
+@use "GlenTools";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+
+:root {
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: rgba(0, 0, 0, 0.87);
+  background-color: #ffffff;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  /* ===== 顏色變數（單一數據源，供 Tailwind 和 CSS 共用） ===== */
+  /* Primary & Secondary */
+  --color-primary: hsl(80, 30%, 50%);
+  --color-primary-strong: hsl(100, 50%, 40%);
+  --color-primary-hover: hsl(100, 50%, 30%);
+
+  --color-secondary: hsl(200, 25%, 60%);
+  --color-secondary-strong: hsl(200, 50%, 40%);
+  --color-secondary-hover: hsl(200, 50%, 30%);
+
+  --color-primary-10: color-mix(in srgb, var(--color-primary) 10%, transparent);
+  --color-primary-25: color-mix(in srgb, var(--color-primary) 25%, transparent);
+  --color-primary-50: color-mix(in srgb, var(--color-primary) 50%, transparent);
+  --color-primary-75: color-mix(in srgb, var(--color-primary) 75%, transparent);
+  --color-primary-90: color-mix(in srgb, var(--color-primary) 90%, transparent);
+  --color-secondary-10: color-mix(in srgb, var(--color-secondary) 10%, transparent);
+  --color-secondary-25: color-mix(in srgb, var(--color-secondary) 25%, transparent);
+  --color-secondary-50: color-mix(in srgb, var(--color-secondary) 50%, transparent);
+  --color-secondary-75: color-mix(in srgb, var(--color-secondary) 75%, transparent);
+  --color-secondary-90: color-mix(in srgb, var(--color-secondary) 90%, transparent);
+
+  /* Accent Colors */
+  --color-accent-yellow: #f1d28a;
+  --color-accent-purple: #d9b3f2;
+  --color-accent-red: #c55d68;
+
+  /* Link Colors */
+  --color-link: hsl(80 40% 40%);
+  --color-link-hover: hsl(100 40% 60%);
+
+  /* Text Colors */
+  --color-text-default:  hsl(000 00% 20%);
+  --color-text-muted:  hsl(000 00% 50%);
+  --color-text-sub:  hsl(000 00% 70%);
+  --color-text-light:  hsl(000 00% 80%);
+  --color-text-emphasized:  hsl(100 30% 40%);
+
+
+  /* Background Colors */
+  --color-bg: hsl(40, 60%, 95%);
+  --color-panel: hsl(80 20% 90%);
+  --color-card:  hsl(40, 50%, 98%);
+  --color-card-hover:  hsl(70, 60%, 90%);
+
+  --color-bg-10: color-mix(in srgb, var(--color-bg) 10%, transparent);
+  --color-bg-25: color-mix(in srgb, var(--color-bg) 25%, transparent);
+  --color-bg-50: color-mix(in srgb, var(--color-bg) 50%, transparent);
+  --color-bg-75: color-mix(in srgb, var(--color-bg) 75%, transparent);
+  --color-bg-90: color-mix(in srgb, var(--color-bg) 90%, transparent);
+  --color-panel-10: color-mix(in srgb, var(--color-panel) 10%, transparent);
+  --color-panel-25: color-mix(in srgb, var(--color-panel) 25%, transparent);
+  --color-panel-50: color-mix(in srgb, var(--color-panel) 50%, transparent);
+  --color-panel-75: color-mix(in srgb, var(--color-panel) 75%, transparent);
+  --color-panel-90: color-mix(in srgb, var(--color-panel) 90%, transparent);
+  --color-card-10: color-mix(in srgb, var(--color-card) 10%, transparent);
+  --color-card-25: color-mix(in srgb, var(--color-card) 25%, transparent);
+  --color-card-50: color-mix(in srgb, var(--color-card) 50%, transparent);
+  --color-card-75: color-mix(in srgb, var(--color-card) 75%, transparent);
+  --color-card-90: color-mix(in srgb, var(--color-card) 90%, transparent);
+
+  /* Border Colors */
+  --color-border:  hsl(80 20% 80%);
+  --color-border-10: color-mix(in srgb, var(--color-border) 10%, transparent);
+  --color-border-25: color-mix(in srgb, var(--color-border) 25%, transparent);
+  --color-border-50: color-mix(in srgb, var(--color-border) 50%, transparent);
+  --color-border-75: color-mix(in srgb, var(--color-border) 75%, transparent);
+  --color-border-90: color-mix(in srgb, var(--color-border) 90%, transparent);
+  --color-divider-light: rgba(224, 224, 224, 0.6);
+
+  /* ---- Special Tokens（UI 常用） ---- */
+  /* 卡片 */
+  --card-radius: 12px;
+  --card-padding-m: 16px;
+  --card-padding-l: 24px;
+
+  /* Banner 遮罩（可用於漸層） */
+  --gradient-dark: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0) 0%,
+    rgba(0, 0, 0, 0.4) 100%
+  );
+}
+
+:root {
+--color-bg-test: #51b47f;
+}
+
+
+
+
+
+
+/* ====================== Base Styles ====================== */
+
+
+body {
+  font-family: "Noto Serif TC", serif;
+  font-size: 1.125rem; /* md (16px) */
+  color: var(--color-text-default);
+
+  background-color: var(--color-bg);
+}
+
+/* H1：頁面主標（每頁唯一）*/
+h1 {
+  font-family: "Noto Serif TC", serif;
+  font-size: 3rem;            
+  line-height: 1.25;
+  font-weight: 600;
+  margin: 2rem 0;
+}
+
+h2 {
+  font-family: "Noto Serif TC", serif;
+  font-size: 2rem;
+  line-height: 1;
+  font-weight: 600;
+  margin: 1rem 0;
+  color: var(--color-text-emphasized);
+  text-align: center;
+}
+
+/* H3：段落小標（次分段） */
+h3 {
+  font-family: "Noto Serif TC", serif;
+  font-size: 1.5rem; 
+  line-height: 1.4;
+  font-weight: 600;
+}
+
+a {
+    font-weight: 500;
+    text-decoration: inherit;
+    color: var(--color-link);
+    &:hover {
+      color: var(--color-link-hover);
+    }
+}
+
+section {
+    max-width: 1024px;
+    margin: 0 auto;
+    padding: 0 24px;
+}
+
+
+.banner-section {
+    max-width: none;
+    width: 100%;
+    padding: 0;
+}
+
+
+.border-test{
+  border: 1px solid #d9b3f2;
+}
+
+ul {
+  list-style: disc;
+  padding-left: 20px;
+}
+
+
+li {
+  margin-bottom: 0.2rem;
+}
+
+input, textarea {
+
+  border: 2px solid var(--color-border-75);
+  background-color: var(--color-card-75);
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.25rem;
+  font-size: 1rem;
+  outline: none;
+  &:focus {
+    border: 2px solid var(--color-primary);
+    background-color: var(--color-card);
+  }
+}
+
+label {
+  font-weight: 600;
+  color: var(--color-text-emphasized);
+  margin-bottom: 0.25rem;
+}
+/* ====================== Animations ====================== */
+
+@keyframes slide-in-left {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slide-in-right {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-slide-in-left {
+  animation: slide-in-left 0.4s ease-out;
+}
+
+.animate-slide-in-right {
+  animation: slide-in-right 0.4s ease-out;
+}

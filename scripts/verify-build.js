@@ -34,6 +34,17 @@ if (jsMatch) {
   const jsFilePath = join(distPath, jsPath);
   if (!existsSync(jsFilePath)) {
     errors.push(`JS 檔案 ${jsPath} 不存在`);
+  } else {
+    // 檢查 JS 檔案中是否使用了 HTTP（應該使用 HTTPS）
+    const jsContent = readFileSync(jsFilePath, 'utf-8');
+    const httpApiMatches = jsContent.match(/http:\/\/atelierenclave-backend\.zeabur\.app/g);
+    if (httpApiMatches) {
+      errors.push(`❌ 發現 HTTP API URL（應該使用 HTTPS）：在 ${jsPath} 中找到 ${httpApiMatches.length} 處`);
+    }
+    const httpsApiMatches = jsContent.match(/https:\/\/atelierenclave-backend\.zeabur\.app/g);
+    if (httpsApiMatches) {
+      console.log(`✅ 確認使用 HTTPS API URL：在 ${jsPath} 中找到 ${httpsApiMatches.length} 處`);
+    }
   }
 } else {
   errors.push('未找到 JS 檔案引用');

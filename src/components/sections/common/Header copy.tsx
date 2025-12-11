@@ -2,8 +2,6 @@ import { useEffect, useLayoutEffect, useState } from "react"
 import { Link, NavLink, useLocation } from "react-router-dom"
 import NavItem from "../../ui/NavItem"
 import { API_BASE_URL } from "@/config/api"
-import logoGreen from "@/img/logo_green.png"
-import logoGreenHover from "@/img/logo_green-hover.png"
 
 interface Course {
   courseID: string
@@ -142,9 +140,8 @@ export default function Header() {
         <div className="max-w-screen-lg mx-auto p-4 flex-row-between-center">
 
           {/* Logo */}
-          <Link to="/" className="group">
-            <img src={logoGreen} alt="logo" className="h-6 w-auto block group-hover:hidden" />
-            <img src={logoGreenHover} alt="logo" className="h-6 w-auto hidden group-hover:block" />
+          <Link to="/" className="text-lg font-bold hover:text-primary-strong">
+            Atelier Enclave
           </Link>
 
           {/* 桌機版 */}

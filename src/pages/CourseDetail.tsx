@@ -234,8 +234,7 @@ export default function CourseDetail() {
         sectionTitle="近期可報名時段"
         items={sessions}
       />
-
-
+      
       </Noise_StackingSingleColorPoints>
     </div>
   )

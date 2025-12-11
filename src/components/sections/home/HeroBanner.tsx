@@ -1,4 +1,6 @@
 import { useEffect, useState, useRef } from "react"
+import logo from "@/img/AtelierEnclave.png"
+import logoCN from "@/img/療癒秘境.png"
 
 interface HeroSlide {
   id: number;
@@ -74,14 +76,14 @@ export default function HeroBanner({ heroSlides = [] }: HeroBannerProps) {
         {/* 主標（置中＋靠上） */}
         <div className="w-[80%] mb-8 text-white 
                         md:absolute md:left-1/2 md:-translate-x-1/2  md:top-[10%] md:-translate-y-[25%]   md:max-w-screen-xl">
-            <h1 className="text-6xl font-bold mb-2 drop-shadow">
-                Atelier Enclave
-            </h1>
-            <p className="text-white/90 
-                            text-lg 
-                            md:text-2xl">
-                讓心靈慢下來的 療癒秘境
-            </p>
+            <h1 className="sr-only">療癒秘境 Atelier Enclave｜官方網站</h1>
+            <img src={logo} alt="logo" className="w-96 h-auto drop-shadow" />
+            <div className="flex-row-start-center mt-4">
+              <p className="text-white/90 text-lg md:text-2xl">
+                  讓心靈慢下來的
+              </p>
+              <img src={logoCN} alt="logo" className="h-6 md:h-8 opacity-90" />
+            </div>
         </div>
 
         {/* 資訊卡片（mobile 貼右下角，桌機才拉開距離） */}

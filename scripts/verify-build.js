@@ -3,105 +3,78 @@ import { join } from 'path';
 
 const distPath = join(process.cwd(), 'dist');
 
-console.log('🔍 检查构建产物...\n');
+// 檢查必要檔案
+const requiredFiles = ['index.html', '404.html'];
+const errors = [];
 
-// 检查必要文件
-const requiredFiles = [
-  'index.html',
-  '404.html'
-];
-
-let allGood = true;
-
+// 檢查必要檔案
 for (const file of requiredFiles) {
   const filePath = join(distPath, file);
-  if (existsSync(filePath)) {
-    console.log(`✅ ${file} 存在`);
-  } else {
-    console.log(`❌ ${file} 不存在`);
-    allGood = false;
+  if (!existsSync(filePath)) {
+    errors.push(`${file} 不存在`);
   }
 }
 
-// 检查 index.html 中的路径并提取资源文件
-console.log('\n📄 检查 index.html 路径...');
+// 檢查 index.html 中的路徑並提取資源檔案
 const indexPath = join(distPath, 'index.html');
 if (!existsSync(indexPath)) {
-  console.log('❌ index.html 不存在');
-  allGood = false;
+  errors.push('index.html 不存在');
+  console.log('❌ 檢查失敗：index.html 不存在');
   process.exit(1);
 }
 
 const html = readFileSync(indexPath, 'utf-8');
 
-// 从 index.html 中提取实际的资源文件路径
+// 從 index.html 中提取實際的資源檔案路徑
 const jsMatch = html.match(/src="([^"]+\.js)"/);
 const cssMatch = html.match(/href="([^"]+\.css)"/);
 
 if (jsMatch) {
-  // 移除路径前缀 /AtelierEnclave/ 来获取实际文件路径
   const jsPath = jsMatch[1].replace(/^\/AtelierEnclave\//, '');
   const jsFilePath = join(distPath, jsPath);
-  if (existsSync(jsFilePath)) {
-    console.log(`✅ ${jsPath} 存在`);
-  } else {
-    console.log(`❌ ${jsPath} 不存在`);
-    allGood = false;
+  if (!existsSync(jsFilePath)) {
+    errors.push(`JS 檔案 ${jsPath} 不存在`);
   }
 } else {
-  console.log('❌ 未找到 JS 文件引用');
-  allGood = false;
+  errors.push('未找到 JS 檔案引用');
 }
 
 if (cssMatch) {
-  // 移除路径前缀 /AtelierEnclave/ 来获取实际文件路径
   const cssPath = cssMatch[1].replace(/^\/AtelierEnclave\//, '');
   const cssFilePath = join(distPath, cssPath);
-  if (existsSync(cssFilePath)) {
-    console.log(`✅ ${cssPath} 存在`);
-  } else {
-    console.log(`❌ ${cssPath} 不存在`);
-    allGood = false;
+  if (!existsSync(cssFilePath)) {
+    errors.push(`CSS 檔案 ${cssPath} 不存在`);
   }
 } else {
-  console.log('❌ 未找到 CSS 文件引用');
-  allGood = false;
+  errors.push('未找到 CSS 檔案引用');
 }
 
 const hasCorrectAssetPath = html.includes('/AtelierEnclave/assets/');
 const hasRedirectScript = html.includes('Single Page Apps for GitHub Pages');
 
-if (hasCorrectAssetPath) {
-  console.log('✅ 资源路径包含 /AtelierEnclave/');
-} else {
-  console.log('❌ 资源路径不正确');
-  allGood = false;
+if (!hasCorrectAssetPath) {
+  errors.push('資源路徑不正確');
 }
 
-if (hasRedirectScript) {
-  console.log('✅ 包含重定向脚本');
-} else {
-  console.log('❌ 缺少重定向脚本');
-  allGood = false;
+if (!hasRedirectScript) {
+  errors.push('缺少重定向腳本');
 }
 
-// 检查 404.html
-console.log('\n📄 检查 404.html...');
+// 檢查 404.html
 const notFoundPath = join(distPath, '404.html');
 if (existsSync(notFoundPath)) {
   const notFoundHtml = readFileSync(notFoundPath, 'utf-8');
-  if (notFoundHtml.includes('pathSegmentsToKeep = 1')) {
-    console.log('✅ 404.html 配置正确');
-  } else {
-    console.log('⚠️  404.html 可能配置不正确');
+  if (!notFoundHtml.includes('pathSegmentsToKeep = 1')) {
+    errors.push('404.html 配置可能不正確');
   }
 }
 
-console.log('\n' + '='.repeat(50));
-if (allGood) {
-  console.log('✅ 所有检查通过！可以部署了。');
+// 輸出結果
+if (errors.length === 0) {
+  console.log('✅ 所有檢查通過！可以部署了。');
 } else {
-  console.log('❌ 发现问题，请检查上述错误。');
+  console.log('❌ 發現問題：');
+  errors.forEach(err => console.log(`  - ${err}`));
   process.exit(1);
 }
 

@@ -202,7 +202,7 @@ export default function Home() {
   return (
     <div>
       <Noise_StackingUneven>
-        <h1 className="sr-only">療癒秘境 Atelier Enclave｜官方網站</h1>
+
         <HeroBanner heroSlides={heroSlides} />
 
         <IntroSection sectionTitle="歡迎來到療癒秘境" items={introItems} />
@@ -217,6 +217,7 @@ export default function Home() {
 
         {/*<RecommendSection questions={dummyQuestions} />*/}
         <div className="h-24"/>
+        
       </Noise_StackingUneven>
 
     </div>

@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:all": "concurrently \"npm run dev\" \"cd ../AtelierEnclave-backend && npm run dev\" --names \"前端,後端\" --prefix-colors \"cyan,yellow\"",
     "build": "tsc -b && vite build",
     "postbuild": "node scripts/fix-paths.js",
     "verify-build": "node scripts/verify-build.js",

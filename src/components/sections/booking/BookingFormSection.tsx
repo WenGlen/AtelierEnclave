@@ -17,11 +17,12 @@ export interface SessionItem {
 interface BookingFormProps {
   sessions: SessionItem[]          // 預約頁會傳入「全部近期課程」
   selectedSessionId?: number | null  // 外部傳入的選中課程 ID
+  apiBaseUrl: string               // API 基礎網址
   
 
 }
 
-export default function BookingFormSection({ sessions, selectedSessionId: externalSelectedSessionId }: BookingFormProps) {
+export default function BookingFormSection({ sessions, selectedSessionId: externalSelectedSessionId, apiBaseUrl }: BookingFormProps) {
   // 解析 URL ?id=301
   const [searchParams] = useSearchParams()
   const urlSessionId = searchParams.get("id")
@@ -70,6 +71,8 @@ const [contactValue, setContactValue] = useState("")
 const [studentNumber, setStudentNumber] = useState(1)
 const [bookingNote, setBookingNote] = useState("")
 const [hasAttemptedSubmit, setHasAttemptedSubmit] = useState(false)
+const [bookingID, setBookingID] = useState<number | null>(null)
+const [bookingTime, setBookingTime] = useState<string>("")
 
 // ===== email 驗證 regex =====
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -99,26 +102,90 @@ useEffect(() => {
 
 // ===== 送出按鈕動作（後續串接 Google Sheet 用）=====
 const handleSubmit = async () => {
-  setHasAttemptedSubmit(true)
-  
-  // 驗證表單
-  if (!studentName.trim()) return
-  if (!studentEmail.trim() || !emailRegex.test(studentEmail)) return
-  if (!contactValue.trim()) return
-  if (!selectedSession) return
-  if (studentNumber < 1) return
-  if (studentNumber > selectedSession.remainingSeats) return
-  
-  setModalStatus("loading")
+  setHasAttemptedSubmit(true);
+
+  // 前端驗證
+  if (!studentName.trim()) return;
+  if (!studentEmail.trim() || !emailRegex.test(studentEmail)) return;
+  if (!contactValue.trim()) return;
+  if (!selectedSession) return;
+  if (studentNumber < 1) return;
+  if (studentNumber > selectedSession.remainingSeats) return;
+
+  setModalStatus("loading");
 
   try {
-    // 這裡等你之後串 Google Sheet API
-    await new Promise(res => setTimeout(res, 1500)) // 假裝送出成功
-    setModalStatus("success")
+    const requestBody = {
+      sessionID: selectedSession.sessionId,
+      studentName,
+      studentEmail,
+      studentContact: contactValue,
+      studentNumber,
+      cost: total,
+      bookingNote
+    };
+
+    console.log("送出預約請求:", requestBody);
+    console.log("API URL:", `${apiBaseUrl}/api/booking`);
+
+    const res = await fetch(`${apiBaseUrl}/api/booking`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(requestBody)
+    });
+
+    // 嘗試解析回應，即使狀態碼不是 200
+    let data;
+    try {
+      const text = await res.text();
+      data = text ? JSON.parse(text) : {};
+    } catch (parseErr) {
+      console.error("無法解析回應:", parseErr);
+      throw new Error("伺服器回應格式錯誤");
+    }
+
+    console.log("API 回應:", { status: res.status, data });
+
+    if (!res.ok) {
+      const errorMessage = data.error || data.details || `HTTP ${res.status}: ${res.statusText}`;
+      console.error("API 錯誤:", errorMessage);
+      throw new Error(errorMessage);
+    }
+
+    // 確認回應包含成功標記
+    if (data.success !== true && !data.bookingID) {
+      console.warn("API 回應格式異常:", data);
+      throw new Error("伺服器回應格式異常，請確認資料是否已成功寫入");
+    }
+
+    console.log("預約成功，bookingID:", data.bookingID);
+    console.log("預約時間:", data.bookingTime);
+    
+    // 儲存 bookingID 和 bookingTime 用於顯示
+    if (data.bookingID) {
+      setBookingID(data.bookingID);
+    }
+    if (data.bookingTime) {
+      setBookingTime(data.bookingTime);
+    }
+    
+    setModalStatus("success");
+
   } catch (err) {
-    setModalStatus("error")
+    console.error("Booking submit error:", err);
+    // 顯示詳細錯誤訊息（在開發環境）
+    if (import.meta.env.DEV) {
+      const errorMessage = err instanceof Error ? err.message : String(err);
+      const errorStack = err instanceof Error ? err.stack : undefined;
+      console.error("錯誤詳情:", {
+        message: errorMessage,
+        stack: errorStack
+      });
+    }
+    setModalStatus("error");
   }
-}
+};
+
 
 
   return (
@@ -305,6 +372,23 @@ const handleSubmit = async () => {
             {modalStatus === "success" && (
               <div className="flex-col-center gap-4">
                 <h3 className="text-center text-emphasized">已送出報名！</h3>
+                
+                {/* 顯示 bookingID 和 bookingTime */}
+                {(bookingID || bookingTime) && (
+                  <div className="w-full bg-card-75 rounded-md p-3 text-center text-sm">
+                    {bookingID && (
+                      <p className="mb-1">
+                        報名編號：<span className="text-emphasized font-bold">#{bookingID}</span>
+                      </p>
+                    )}
+                    {bookingTime && (
+                      <p className="text-muted text-xs">
+                        報名時間：{bookingTime}
+                      </p>
+                    )}
+                  </div>
+                )}
+                
                 <div className="text-sm text-muted text-center leading-relaxed">
                   已收到您的報名資料。
                   <br/>請在 24 小時內完成匯款，

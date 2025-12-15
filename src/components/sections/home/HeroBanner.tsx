@@ -79,7 +79,7 @@ export default function HeroBanner({ heroSlides = [] }: HeroBannerProps) {
             <h1 className="sr-only">療癒秘境 Atelier Enclave｜官方網站</h1>
             <img src={logo} alt="logo" className="w-96 h-auto drop-shadow" />
             <div className="flex-row-start-center mt-4">
-              <p className="text-white/90 text-lg md:text-2xl">
+              <p className="text-white/90 text-lg md:text-2xl mr-2">
                   讓心靈慢下來的
               </p>
               <img src={logoCN} alt="logo" className="h-6 md:h-8 opacity-90" />

@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react"
+import { API_BASE_URL } from "@/config/api"
 
 type ModalStatus = "none" | "loading" | "success" | "error"
 
@@ -11,6 +12,8 @@ export default function ContactFormSection() {
 
   const [hasAttemptedSubmit, setHasAttemptedSubmit] = useState(false)
   const [modalStatus, setModalStatus] = useState<ModalStatus>("none")
+  const [contactID, setContactID] = useState<number | null>(null)
+  const [sendTime, setSendTime] = useState<string>("")
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
@@ -26,10 +29,48 @@ export default function ContactFormSection() {
     setModalStatus("loading")
 
     try {
-      // 之後串 Google Sheet API 在此
-      await new Promise((res) => setTimeout(res, 1500))
+      const requestBody = {
+        senderName: visitorName,
+        senderEmail: visitorEmail,
+        senderContact: contactMethod,
+        senderContent: message
+      }
+
+      const res = await fetch(`${API_BASE_URL}/api/contact`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(requestBody)
+      })
+
+      let data;
+      try {
+        const text = await res.text();
+        data = text ? JSON.parse(text) : {};
+      } catch (parseErr) {
+        console.error("無法解析回應:", parseErr);
+        throw new Error("伺服器回應格式錯誤");
+      }
+
+      if (!res.ok) {
+        const errorMessage = data.error || data.details || `HTTP ${res.status}: ${res.statusText}`;
+        console.error("API 錯誤:", errorMessage);
+        throw new Error(errorMessage);
+      }
+
+      if (data.success !== true && !data.contactID) {
+        throw new Error("伺服器回應格式異常，請確認資料是否已成功寫入");
+      }
+
+      if (data.contactID) {
+        setContactID(data.contactID);
+      }
+      if (data.sendTime) {
+        setSendTime(data.sendTime);
+      }
+
       setModalStatus("success")
     } catch (err) {
+      console.error("Contact submit error:", err);
       setModalStatus("error")
     }
   }
@@ -142,9 +183,25 @@ export default function ContactFormSection() {
                 {modalStatus === "success" && (
                     <>
                     <h3 className="text-center text-emphasized">已收到你的訊息！</h3>
+                    
+                    {(contactID || sendTime) && (
+                      <div className="w-full bg-card-75 rounded-md p-3 text-center text-sm">
+                        {contactID && (
+                          <p className="mb-1">
+                            發信編號：<span className="text-emphasized font-bold">#{contactID}</span>
+                          </p>
+                        )}
+                        {sendTime && (
+                          <p className="text-muted text-xs">
+                            發信時間：{sendTime}
+                          </p>
+                        )}
+                      </div>
+                    )}
+                    
                     <p className="text-sm text-muted text-center leading-relaxed">
                         我們會在 1–2 個工作天內回覆，
-                        <br />若你想快速詢問，也可私訊 Instagram。
+                        <br />若你想快速詢問，也可私訊 LINE。
                     </p>
                     <button
                         onClick={() => setModalStatus("none")}

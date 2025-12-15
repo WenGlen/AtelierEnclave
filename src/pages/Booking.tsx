@@ -125,6 +125,7 @@ export default function Booking() {
         <BookingFormSection
           sessions={sessions}
           selectedSessionId={selectedSessionId}
+          apiBaseUrl={API_BASE_URL}
         />
         </section>
 

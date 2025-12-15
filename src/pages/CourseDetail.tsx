@@ -3,8 +3,8 @@ import { useParams } from "react-router-dom"
 
 import PhotosSection from "../components/sections/common/PhotosSection"
 import UpcomingSessionsSection from "@/components/sections/common/UpcomingSessionsSection"
+import Noise_StackingUneven from "@/layouts/Noise_StackingUneven"
 
-import Noise_StackingSingleColorPoints from "@/layouts/Noise_StackingSingleColorPoints"
 import { API_BASE_URL } from "@/config/api"
 
 interface CourseDetail {
@@ -91,7 +91,7 @@ export default function CourseDetail() {
 
   return (
     <div className="w-full">
-      <Noise_StackingSingleColorPoints>
+      <Noise_StackingUneven>
 
       {/* ========== 4.3.1 Banner（66vh） ========== */}
       <section className="banner-section relative w-full h-[66vh] overflow-hidden">
@@ -235,7 +235,7 @@ export default function CourseDetail() {
         items={sessions}
       />
       
-      </Noise_StackingSingleColorPoints>
+      </Noise_StackingUneven>
     </div>
   )
 }
